@@ -14,12 +14,16 @@ db = deta.Base("stream_login")
 
 def add_user(username,name, password):
     #primary key = username, same username => old entry overwritten
+    # initially was 
+        #hashed = stauth.Hasher(password).generate() # returns list 
+        #db.put({"key":username,"name":name,"password":hashed[0]})
+
     if db.get(username) == None: #add a conditional statement so usernames are not overwritten
-        salt = bcrypt.gensalt()
-        hashed = bcrypt.hashpw(password.encode(), salt).decode()
-        db.put({"key":username,"name":name,"password":hashed})
+        salt = bcrypt.gensalt()# create a salt
+        hashed = bcrypt.hashpw(password.encode(), salt).decode()# goes from a binary string to normal string
+        db.put({"key":username,"name":name,"password":hashed})# add to database
     else:
-        return -1
+        return -1 # to show there was an error in executiobn
 
 add_user("q","c","1")
 add_user("v","e","13")
@@ -32,7 +36,7 @@ def get_user(username):
 
 def fetch_all_users():
     res = db.fetch()
-    return res.items
+    return res.items # returns ditionary of contents in the database
 
 def update_user(username, update):
     #enter update as a dictionary
@@ -40,10 +44,11 @@ def update_user(username, update):
 
 def delete_user(username):
     db.delete()
+    #deletes record for record wih user name
 
 def pw_check(username, pw):
     x = bcrypt.checkpw(pw.encode(), get_user(username)["password"].encode()) # checks the password
-    return x
+    return x 
 
 #print(get_user("q"))
 #pw = "1"
